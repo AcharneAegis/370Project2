@@ -17,9 +17,14 @@
       *        7.  Hire Date
       *        8.  Employee Status
       *        9.  Separation Date
-      *        10.  Starting Yearly Salary
-      *        11.  Date of Last Pay Increase
-      *        12.  Current Yearly Salary
+      *        10. Starting Yearly Salary
+      *        11. Date of Last Pay Increase
+      *        12. Current Yearly Salary
+      *        13. Number of Dependents
+      *        14. Health Plan
+      *        15. Health Insurance Cost
+      *        16. Dental Plan Cost
+      *        17. Dental Insurance Cost
       * *******
       * OUTPUT:
       *    The SALARY REPORT file contains the following
@@ -37,7 +42,14 @@
       *        1.  Salary Total
       *    *************
       * CALCULATIONS
+      *    INCREASE THE SALARY BY 5% 
+      *    INCREASE THE HEALTH INSURANCE COST 2.5%
+      *    INCREASE THE DENTAL INSURANCE COST 1.5%
+      *
       *    ADD EACH EMPLOYEE'S CURRENT SALARY TO A RUNNING TOTAL SALAY
+      *    FOR EACH STORE AND AN OVERALL TOTAL
+      *
+      *    DO THE SAME FOR DENTAL AND HEALTH.
       *
       ******************************************************************
        ENVIRONMENT DIVISION.
@@ -48,7 +60,7 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT EMPLOYEE-FILE
-               ASSIGN TO 'PR1FA21-Knox.txt'
+               ASSIGN TO 'PR2FA21-Knox.txt'
                ORGANIZATION IS LINE SEQUENTIAL.
            SELECT EMP-REPORT-FILE
                ASSIGN TO PRINTER 'Knox-Salary-Report'.
@@ -57,7 +69,7 @@
        FILE SECTION.
 
        FD EMPLOYEE-FILE
-           RECORD CONTAINS 75 CHARACTERS.
+           RECORD CONTAINS 85 CHARACTERS.
 
        01  EMPLOYEE-RECORD.
            05  EMP-STORE-ID            PIC A(4).
@@ -66,11 +78,16 @@
            05  EMP-LAST-NAME           PIC X(10).
            05  EMP-FIRST-NAME          PIC X(10).
            05  FILLER                  PIC X(11).
-           05  EMP-STATUS              PIC X(1).
+           05  FILLER                  PIC X(1).
            05  FILLER                  PIC 9(8).
            05  FILLER                  PIC 9(8).
-           05  EMP-LAST-RAISE-DATE     PIC 9(8).
+           05  FILLER                  PIC 9(8).
            05  EMP-CURRENT-SALARY      PIC 999999V99.
+           05  EMP-NUM-DEPENDENTS      PIC 99.
+           05  EMP-HEALTH-PLAN         PIC A.
+           05  EMP-HEATH-COST          PIC 999.
+           05  EMP-DENTAL-PLAN         PIC A.
+           05  EMP-DENTAL-COST         PIC 999.
 
        FD EMP-REPORT-FILE
            RECORD CONTAINS 80 CHARACTERS.
@@ -83,12 +100,22 @@
            05  EOF-FLAG                PIC X           VALUE ' '.
                88 NO-MORE-DATA                         VALUE 'N'.
 
-       01  TOTAL-FIELDS.
-           05  TF-SALARY-TOTAL         PIC S9(7)V99    VALUE +0.
+       01  OVERALL-TOTAL-FIELDS.
+           05  OT-SALARY-TOTAL         PIC S9(7)V99    VALUE +0.
+           05  OT-HEALTH-TOTAL         PIC S9(5)V99    VALUE +0.
+           05  OT-DENTAL-TOTAL         PIC S9(5)V99    VALUE +0.
+
+       01  TEMP-FIELDS
+           05  NUM-OF-EMPLOYEES        PIC 9999        VALUE 0.
+           05  LAST-STORE-ID           PIC XXXX        VALUE SPACES.
 
        01  REPORT-FIELDS.
            05  PROPER-SPACING          PIC S9          VALUE +2.
 
+       01  CONSTANTS.
+           05  SALARY-INCREASE         PIC S9V99       VALUE +1.05.
+           05  HEALTH-INCREASE         PIC S9V999      VALUE +1.025.
+           05  DENTAL-INCREASE         PIC S9V999      VALUE +1.015.
 
       *********************    OUTPUT AREA     *************************
 
@@ -101,71 +128,81 @@
            05                          PIC XXX         VALUE 'PWA'.
            
        01  HEADING-TWO.
-           05                          PIC X(34)       VALUE SPACES.
-           05                          PIC X(15)       VALUE 
-                                                   'EMPLOYEE REPORT'.
-       01  HEADING-THREE.
-           05                          PIC X(35)       VALUE SPACES.
-           05                          PIC X(13)       VALUE 
-                                                       'KNOXVILLE, TN'.
+           05                          PIC X(28)       VALUE SPACES.
+           05                          PIC X(23)       VALUE 
+                                             'ALABAMA EMPLOYEE REPORT'.
+       01  STORE-LABEL-HEADING.
+           05                          PIC X(9)       VALUE 
+                                                     '  STORE: '.
+           05  SLH-STORE-LOCATION       PIC A(10).
+
        01  HEADING-FOUR.
            05                          PIC X(3)        VALUE SPACES.
            05                          PIC X(3)        VALUE 'EMP'.
-           05                          PIC X(4)        VALUE SPACES.
-           05                          PIC X(3)        VALUE 'EMP'.
-           05                          PIC X(6)        VALUE SPACES.
+           05                          PIC X(7)        VALUE SPACES.
            05                          PIC X(3)        VALUE 'EMP'.
            05                          PIC X(9)        VALUE SPACES.
            05                          PIC X(3)        VALUE 'EMP'.
            05                          PIC X(8)        VALUE SPACES.
-           05                          PIC X(3)        VALUE 'EMP'.
-           05                          PIC X(6)        VALUE SPACES.
-           05                          PIC X(4)        VALUE 'LAST'.
-           05                          PIC X(7)        VALUE SPACES.
-           05                          PIC X(8)        VALUE 'CURRENT'.
+           05                          PIC X(9)        VALUE 
+                                                           'INCREASED'.
+           05                          PIC X(4)        VALUE SPACES.
+           05                          PIC X(9)        VALUE 
+                                                           'INCREASED'.
+           05                          PIC X(4)        VALUE SPACES.
+           05                          PIC X(9)        VALUE 
+                                                           'INCREASED'.
 
        01  HEADING-FIVE.
            05                          PIC X(3)        VALUE SPACES.
            05                          PIC X(2)        VALUE 'ID'.
-           05                          PIC X(5)        VALUE SPACES.
+           05                          PIC X(8)        VALUE SPACES.
            05                          PIC X(3)        VALUE 'POS'.
-           05                          PIC X(2)        VALUE SPACES.
-           05                          PIC X(10)       VALUE 
-                                                       'FIRST NAME'.
-           05                          PIC X(3)        VALUE SPACES.
+           05                          PIC X(6)        VALUE SPACES.
            05                          PIC X(9)        VALUE 
-                                                           'LAST NAME'.
-           05                          PIC X(3)        VALUE SPACES.
-           05                          PIC X(6)        VALUE 'STATUS'.
-           05                          PIC X(3)        VALUE SPACES.
-           05                          PIC X(8)        VALUE 'INCREASE'.
+                                                       'LAST NAME'.
            05                          PIC X(6)        VALUE SPACES.
            05                          PIC X(6)        VALUE 'SALARY'.
+           05                          PIC X(7)        VALUE SPACES.
+           05                          PIC X(6)        VALUE 'HEALTH'.
+           05                          PIC X(7)        VALUE SPACES.
+           05                          PIC X(6)        VALUE 'DENTAL'.
 
 
        01  DETAIL-LINE.
            05                          PIC X(2)        VALUE SPACES.
            05  DL-EMP-ID               PIC X(5).
-           05                          PIC X(3)        VALUE SPACES.
-           05  DL-EMP-POS              PIC A(2).
-           05                          PIC X(3)        VALUE SPACES.
-           05  DL-EMP-FIRST-NAME       PIC X(10).
+           05                          PIC X(2)        VALUE SPACES.
+           05  DL-EMP-POS              PIC A(10).
            05                          PIC X(3)        VALUE SPACES.
            05  DL-EMP-LAST-NAME        PIC X(10).
-           05                          PIC X(4)        VALUE SPACES.
-           05  DL-EMP-STATUS           PIC A(1).
-           05                          PIC X(5)        VALUE SPACES.
-           05  DL-EMP-LAST-RAISE-DATE  PIC 99/99/9999.
            05                          PIC X(3)        VALUE SPACES.
-           05  DL-EMP-CURRENT-SALARY   PIC $999,999.99.
+           05  DL-EMP-INC-SALARY       PIC $ZZZ,ZZ9.99.
+           05                          PIC X(4)        VALUE SPACES.
+           05  DL-EMP-INC-HEALTH       PIC $Z,ZZ9.99.
+           05                          PIC X(4)        VALUE SPACES.
+           05  DL-EMP-INC-DENTAL       PIC $Z,ZZ9.99.
+
+       01  STORE-TOTAL-LINE.
+           05                          PIC X(19)       VALUE SPACES.
+           05                          PIC X(14)       VALUE
+                                                   'STORE TOTALS: '.
+           05  STORE-SALARY-TOTAL      PIC $Z,ZZZ,ZZ9.99.
+           05                          PIC X(3)        VALUE SPACES.
+           05  STORE-HEALTH-TOTAL      PIC $ZZ,ZZ9.99.
+           05                          PIC X(3)        VALUE SPACES.
+           05  STORE-DENTAL-TOTAL      PIC $ZZ,ZZ9.99.
 
 
-       01  TOTAL-LINE.
-           05  FILLER                  PIC X(45)         VALUE SPACES.
-           05                          PIC X(13)       VALUE 
-                                                       'SALARY TOTAL:'.
-           05                          PIC X(1)        VALUE SPACES.
-           05  TL-SALARY-TOTAL         PIC $9,999,999.99.
+       01  OVERALL-TOTAL-LINE.
+           05                          PIC X(18)       VALUE SPACES.
+           05                          PIC X(14)       VALUE
+                                                   'GRAND TOTALS: '.
+           05  OVERALL-SALARY-TOTAL      PIC $ZZ,ZZZ,ZZ9.99.
+           05                          PIC X(3)        VALUE SPACES.
+           05  OVERALL-HEALTH-TOTAL      PIC $ZZ,ZZ9.99.
+           05                          PIC X(3)        VALUE SPACES.
+           05  OVERALL-DENTAL-TOTAL      PIC $ZZ,ZZ9.99.
 
        PROCEDURE DIVISION.
        
@@ -180,10 +217,10 @@
            OPEN INPUT EMPLOYEE-FILE
                OUTPUT EMP-REPORT-FILE
            ACCEPT H1-DATE FROM DATE YYYYMMDD
-           PERFORM 20-HEADER-ROUTINE
+           PERFORM 20-MAIN-HEADER-ROUTINE
            .
 
-       20-HEADER-ROUTINE.
+       20-MAIN-HEADER-ROUTINE.
            WRITE REPORT-RECORD FROM HEADING-ONE
                AFTER ADVANCING PROPER-SPACING
 
@@ -191,18 +228,7 @@
 
            WRITE REPORT-RECORD FROM HEADING-TWO
                AFTER ADVANCING PROPER-SPACING
-
-           WRITE REPORT-RECORD FROM HEADING-THREE
-               AFTER ADVANCING PROPER-SPACING
-
-           WRITE REPORT-RECORD FROM HEADING-FOUR
-               AFTER ADVANCING PROPER-SPACING
-
-           MOVE 1 TO PROPER-SPACING
-           WRITE REPORT-RECORD FROM HEADING-FIVE
-               AFTER ADVANCING PROPER-SPACING
                
-           MOVE 2 TO PROPER-SPACING
            .
        
        25-PROCESS-INPUT-FILE.
@@ -211,20 +237,37 @@
                    AT END
                        MOVE 'N' TO EOF-FLAG
                    NOT AT END 
-                       PERFORM 30-PASS-EMPLOYEE-DATA
+                       PERFORM 30-PROCESS-EMPLOYEE-DATA
                END-READ
            END-PERFORM
+
+           PERFORM 31-STORE-HEADER-ROUTINE
            .
        
-       30-PASS-EMPLOYEE-DATA.
+       30-PROCESS-EMPLOYEE-DATA.
            
+
+           EVALUATE TRUE
+               WHEN EMP-STORE-ID IS NOT EQUAL TO LAST-STORE-ID
+                  MOVE EMP-STORE-ID TO LAST-STORE-ID
+                  PERFORM 31-STORE-HEADER-ROUTINE
+           END-EVALUATE
+           
+
+
            MOVE EMP-ID TO DL-EMP-ID
            MOVE EMP-POSITION TO DL-EMP-POS
-           MOVE EMP-FIRST-NAME TO DL-EMP-FIRST-NAME
            MOVE EMP-LAST-NAME TO DL-EMP-LAST-NAME
-           MOVE EMP-STATUS TO DL-EMP-STATUS
-           MOVE EMP-LAST-RAISE-DATE TO DL-EMP-LAST-RAISE-DATE
-           MOVE EMP-CURRENT-SALARY TO DL-EMP-CURRENT-SALARY
+
+           
+           MULTIPLY EMP-CURRENT-SALARY BY SALARY-INCREASE
+           MULTIPLY EMP-HEALTH-COST BY HEALTH-INCREASE
+           MULTIPLY EMP-DENTAL-COST BY DENTAL-INCREASE
+           
+           MOVE EMP-CURRENT-SALARY TO DL-EMP-INC-SALARY
+           MOVE EMP-HEALTH-COST TO DL-EMP-INC-HEALTH
+           MOVE EMP-DENTAL-COST TO DL-EMP-INC-DENTAL
+
 
            MOVE DETAIL-LINE TO REPORT-RECORD
            PERFORM 35-WRITE-A-LINE
@@ -233,6 +276,23 @@
            ADD EMP-CURRENT-SALARY TO TF-SALARY-TOTAL
 
            .
+
+
+       31-STORE-HEADER-ROUTINE
+           IF LAST-STORE-ID IS EQUAL TO 'BHAM'
+              MOVE 'BIRMINGHAM' TO SLH-STORE-LOCATION
+           END-IF
+
+           IF LAST-STORE-ID IS EQUAL TO 'HUNT'
+              MOVE 'HUNTSVILLE' TO SLH-STORE-LOCATION
+           END-IF
+           
+           MOVE 2 TO PROPER-SPACING
+
+           WRITE REPORT-RECORD FROM STORE-LABEL-HEADING
+               AFTER ADVANCING PROPER-SPACING
+       .
+
        35-WRITE-A-LINE.
            WRITE REPORT-RECORD
                AFTER ADVANCING PROPER-SPACING
@@ -249,7 +309,7 @@
            MOVE TF-SALARY-TOTAL TO TL-SALARY-TOTAL
            MOVE 2 TO PROPER-SPACING
 
-           WRITE REPORT-RECORD FROM TOTAL-LINE
+           WRITE REPORT-RECORD FROM OVERALL-TOTAL-LINE
                AFTER ADVANCING PROPER-SPACING
 
            .
