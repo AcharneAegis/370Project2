@@ -1,0 +1,49 @@
+
+
+2021/10/08                         BENNETT SHOES                    PWA         
+
+                             ALABAMA EMPLOYEE REPORT                            
+
+  STORE: BIRMINGHAM                                                             
+
+   EMP       EMP         EMP        INCREASED    INCREASED    INCREASED         
+   ID        POS      LAST NAME      SALARY       HEALTH       DENTAL           
+
+  BHMJ0  MANAGER      SORENSEN     $ 94,500.00    $  430.50    $  126.87        
+  BHS2T  SUPERVISOR   MARGOLES     $ 75,600.00    $  430.50    $  126.87        
+  BHS30  SUPERVISOR   JERICHO      $ 75,600.00    $  430.50    $  126.87        
+  BHOT4  OFFICE       HOWARD       $ 36,750.00    $  430.50    $  126.87        
+  BHO5X  OFFICE       MANUEL       $ 31,500.00    $  138.37    $   76.12        
+  BHA6W  SALES        SANTIAGO     $ 42,000.00    $  430.50    $  126.87        
+  BHAK0  SALES        JOHANSEN     $ 42,000.00    $  138.37    $   76.12        
+  BHA5P  SALES        HENLEY       $      0.00    $    0.00    $    0.00        
+  BHA9M  SALES        YUNGR        $ 42,000.00    $  430.50    $  126.87        
+  BHA30  SALES        PETERSON     $ 36,750.00    $  430.50    $  126.87        
+  BHGB7  SECURITY     CASTREL      $ 52,500.00    $  430.50    $  126.87        
+  BHG2L  SECURITY     TALLEY       $ 52,500.00    $  430.50    $  126.87        
+
+                   STORE TOTALS: $  581,700.00   $ 4,151.24   $ 1,294.07        
+
+
+  STORE: HUNTSVILLE                                                             
+
+   EMP       EMP         EMP        INCREASED    INCREASED    INCREASED         
+   ID        POS      LAST NAME      SALARY       HEALTH       DENTAL           
+
+  HUM10  MANAGER      BURGESS      $120,750.00    $  430.50    $  126.87        
+  HUS20  SUPERVISOR   HARGRACES    $ 80,850.00    $  430.50    $  126.87        
+  HUS30  SUPERVISOR   SANDERSON    $ 78,750.00    $  430.50    $  126.87        
+  HUO40  OFFICE       MYERS        $ 58,275.00    $  430.50    $  126.87        
+  HUO50  OFFICE       FORD         $ 31,500.00    $  430.50    $  126.87        
+  HUA60  SALES        BEECHER      $ 57,750.00    $  430.50    $  126.87        
+  HUA70  SALES        GUNTER       $ 47,775.00    $  430.50    $  126.87        
+  HUA80  SALES        HUNTSMAN     $      0.00    $    0.00    $    0.00        
+  HUA90  SALES        YARBROUGH    $ 47,775.00    $  430.50    $  126.87        
+  HUA0A  SALES        WALKER       $ 36,750.00    $  430.50    $  126.87        
+  HUG0B  SECURITY     SIMMONS      $ 68,775.00    $  138.37    $   76.12        
+  HUG0C  SECURITY     GRAY         $ 63,525.00    $    0.00    $   76.12        
+
+                   STORE TOTALS: $  692,475.00   $ 4,012.87   $ 1,294.07        
+
+
+                  GRAND TOTALS: $ 1,274,175.00  $  8,164.11  $  2,588.14        
