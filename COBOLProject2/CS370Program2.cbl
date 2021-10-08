@@ -126,6 +126,11 @@
            05  TEMP-EMP-HEALTH         PIC 999V99      VALUE 0.
            05  TEMP-EMP-DENTAL         PIC 999V99      VALUE 0.
 
+       01  CURRENT-DATE.
+           05  CD-YEAR                 PIC XXXX.
+           05  CD-MONTH                PIC XX.
+           05  CD-DAY                  PIC XX.
+
        01  REPORT-FIELDS.
            05  PROPER-SPACING          PIC S9          VALUE +2.
 
@@ -137,7 +142,12 @@
       *********************    OUTPUT AREA     *************************
 
        01  HEADING-ONE.
-           05  H1-DATE                 PIC 9999/99/99. 
+           05  H1-DATE.
+               10  H1-MONTH        PIC XX.
+               10  FILLER          PIC X         VALUE '/'.
+               10  H1-DAY          PIC XX.
+               10  FILLER          PIC X         VALUE '/'.
+               10  H1-YEAR         PIC XXXX.
            05                          PIC X(25)       VALUE SPACES.
            05                          PIC A(13)       VALUE 
                                                        'BENNETT SHOES'.
@@ -233,7 +243,13 @@
 
            OPEN INPUT EMPLOYEE-FILE
                OUTPUT EMP-REPORT-FILE
-           ACCEPT H1-DATE FROM DATE YYYYMMDD
+
+           ACCEPT CURRENT-DATE FROM DATE YYYYMMDD
+           MOVE CD-MONTH TO H1-MONTH
+           MOVE CD-DAY TO H1-DAY
+           MOVE CD-YEAR TO H1-YEAR
+
+           
            PERFORM 20-MAIN-HEADER-ROUTINE
            .
 
